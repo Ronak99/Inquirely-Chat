@@ -1,0 +1,41 @@
+{
+  "name": "inquirely-chat",
+  "version": "1.0.1",
+  "description": "Chat component for the Inquirely Service.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "rollup": "rollup -c --bundleConfigAsCjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ronak99/Inquirely-Chat.git"
+  },
+  "keywords": [
+    "Inquirely",
+    "ReactJS",
+    "AI"
+  ],
+  "author": "Ronak Punase",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ronak99/Inquirely-Chat/issues"
+  },
+  "homepage": "https://github.com/Ronak99/Inquirely-Chat#readme",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.1",
+    "@types/react": "^19.0.1",
+    "lucide-react": "^0.468.0",
+    "react": "^19.0.0",
+    "rollup": "^4.28.1",
+    "rollup-plugin-dts": "^6.1.1",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "tslib": "^2.8.1",
+    "typescript": "^5.7.2"
+  }
+}
