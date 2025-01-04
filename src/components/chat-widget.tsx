@@ -1,50 +1,72 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MessageCircle, Send, X, SparklesIcon } from "lucide-react";
+import { assistantsApi, chatsApi } from "../api/endpoints";
+import {
+  ApiResponse,
+  Assistant,
+  AssistantApiRequest,
+  ChatsApiRequest,
+  Message,
+} from "../types/api";
 import { useApi } from "../hooks/useApi";
-import { AskApiRequest, AskApiResponse } from "../types/api";
-import { askApi } from "../api/endpoints";
-import SystemBubble from "./system-bubble";
-import UserBubble from "./user-bubble";
-import Message from "../types/message";
+import ChatBubble from "./chat_bubble";
 
 interface ChatWidgetProps {
-  initialMessages?: Message[];
-  onSendMessage?: (message: string) => void;
   primaryColor?: string;
   folderId: string;
+  projectId: string;
+  apiKey: string;
 }
 
-const ChatWidget = ({
-  initialMessages = [],
-  onSendMessage = () => {},
-  primaryColor = "#0070f3",
-  folderId,
-}: ChatWidgetProps) => {
+const ChatWidget = ({ folderId, projectId, apiKey }: ChatWidgetProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
-  const [inputValue, setInputValue] = useState("");
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
 
-  const { execute: executeQuery, isLoading } = useApi<
-    AskApiRequest,
-    AskApiResponse
-  >(askApi.ask, {
+  const [inputMessage, setInputMessage] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [assistant, setAssistant] = useState<Assistant | null>(null);
+
+  // Assistant API
+  const { execute: getAssistant, isLoading: loadingAssistant } = useApi<
+    AssistantApiRequest,
+    ApiResponse<Assistant>
+  >(assistantsApi.get, {
     onSuccess: (data) => {
-      const newMessage: Message = {
-        id: Date.now().toString(),
-        content: data.response,
-        sender: "system",
-        timestamp: new Date(),
-      };
-      setMessages((prevMessages) => {
-        const updatedMessages = [...prevMessages, newMessage];
-        scrollToBottom(); // Scroll to bottom after updating messages
-        return updatedMessages;
+      setAssistant(data.data!);
+
+      // get the chats
+      getAllChats({
+        headers: { Authorization: apiKey },
+        query: { assistant_id: data.data!.id },
       });
     },
     onError: (error) => {
-      console.error("Failed to fetch response:", error);
+      // handleAssistantError(error);
     },
+  });
+
+  // Get All Chats
+  const { execute: getAllChats, isLoading: loadingAllChats } = useApi<
+    ChatsApiRequest,
+    ApiResponse<Message[]>
+  >(chatsApi.getAllChats, {
+    onSuccess: (data) => {
+      setMessages(data.data!);
+    },
+    onError: (error) => {},
+  });
+
+  // Send Message
+  const { execute: sendMessage, isLoading: sendingMessage } = useApi<
+    ChatsApiRequest,
+    ApiResponse<Message>
+  >(chatsApi.sendMessage, {
+    onSuccess: (data) => {
+      // hide the typing thing
+      setMessages((prevMessages) => [...prevMessages, data.data!]);
+      removeSystemTyping();
+    },
+    onError: (error) => {},
   });
 
   const scrollToBottom = () => {
@@ -52,100 +74,159 @@ const ChatWidget = ({
   };
 
   useEffect(() => {
+    getAssistant({
+      headers: { Authorization: apiKey },
+      query: { project_id: projectId },
+    });
+  }, []);
+
+  useEffect(() => {
     if (isOpen) {
       scrollToBottom();
     }
   }, [messages, isOpen]);
 
-  const handleSendMessage = () => {
-    if (inputValue.trim()) {
-      const newMessage: Message = {
-        id: Date.now().toString(),
-        content: inputValue,
-        sender: "user",
-        timestamp: new Date(),
-      };
-      setMessages([...messages, newMessage]);
+  const removeSystemTyping = () => {
+    setMessages((prevMessages) =>
+      prevMessages.filter((message) => message.content != "system_typing")
+    );
+  };
 
-      executeQuery({
-        folder_id: folderId,
-        query: inputValue,
+  const addTypingIndicator = () => {
+    const typingIndicator: Message = {
+      content: "system_typing",
+      id: new Date().toISOString(),
+      sender: assistant!.id,
+      sent_on: new Date().toISOString(),
+      thread_id: assistant!.id,
+      role: "assistant",
+    };
+
+    setMessages((prevMessages) => [...prevMessages, typingIndicator]);
+  };
+
+  const addNewMessage = ({
+    sentByAssistant,
+    content,
+    sender,
+  }: {
+    sentByAssistant: boolean;
+    content: string;
+    sender: string;
+  }) => {
+    const message: Message = {
+      content: content,
+      role: sentByAssistant ? "assistant" : "user",
+      sender: sender,
+      thread_id: assistant!.id,
+    };
+
+    // Update the chat list
+    setMessages((prevMessages) => [...prevMessages, message]);
+
+    // Clear input message.
+    setInputMessage("");
+  };
+
+  // Handle sending a message
+  const handleSendMessage = async () => {
+    if (!assistant) return;
+    if (inputMessage.trim() === "") return;
+
+    addNewMessage({
+      content: inputMessage.trim(),
+      sentByAssistant: false,
+      sender: projectId,
+    });
+
+    addTypingIndicator();
+
+    // Simulate assistant response (replace with actual logic)
+    try {
+      await sendMessage({
+        data: {
+          folder_id: folderId,
+          query: inputMessage.trim(),
+          assistant_id: assistant.id,
+        },
+        headers: {
+          Authorization: apiKey,
+        },
       });
-
-      onSendMessage(inputValue);
-      setInputValue("");
+    } catch (e) {
+    } finally {
     }
   };
 
-  const generateResponse = async () => {};
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
+  // Handle input key press (Enter to send)
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
       handleSendMessage();
     }
   };
 
+  // ************ UI BEGINS ***********
   return (
     <div className="fixed bottom-4 right-4 z-50">
-      {isOpen ? (
-        <div className="bg-slate-100 rounded-lg shadow-xl w-80 h-[450px] flex flex-col">
-          {/* Header */}
+      {isOpen && assistant ? (
+        <div className="w-[400px] flex flex-col h-[650px] bg-white rounded-md">
           <div
-            className="py-2 px-4 flex justify-between items-center rounded-tl-md rounded-tr-md"
-            style={{ backgroundColor: primaryColor }}
+            className={`h-[60px] py-4 rounded-t-md flex items-center px-2 space-x-2`}
+            style={{ background: assistant.color }}
           >
-            <div className="flex items-center space-x-2">
-              <SparklesIcon size={15} fill="white" />
-              <h3 className="text-white font-semibold">Travel AI</h3>
+            <img
+              className="rounded-full"
+              src={assistant.avatar_url}
+              alt=""
+              width={40}
+              height={40}
+            />
+            <div className="flex flex-col flex-grow">
+              <p className="font-semibold">{assistant.name}</p>
+              <p className="text-xs text-white/70">{assistant.designation}</p>
             </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-white hover:opacity-75"
-            >
-              <X size={20} />
-            </button>
+            <SparklesIcon width={30} height={20} />
           </div>
 
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto px-4 pt-4 space-y-4">
-            {messages.map((message) =>
-              message.sender == "user" ? (
-                <UserBubble
-                  key={message.id}
-                  message={message}
-                  primaryColor={primaryColor}
-                />
-              ) : (
-                <SystemBubble key={message.id} message={message} />
-              )
+          {/* Message List */}
+          <div className="bg-white flex flex-col flex-grow px-2 pt-2 space-y-2 overflow-y-auto">
+            {messages.length === 0 ? (
+              <div className="text-center text-gray-800 py-4">
+                {assistant.conversation_starter}
+              </div>
+            ) : (
+              messages.map((message) => (
+                <ChatBubble message={message} themeColor={assistant.color} />
+              ))
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input */}
-          <div className="shadow-md shadow-gray-300 bg-white ml-4 mr-4 mb-4 rounded-lg">
-            <div className="flex">
+          {/* Chat Control */}
+          <div className="bg-white">
+            <div className="rounded-md flex border border-neutral-300 py-4 px-2 mx-2 mb-4 mt-2">
               <input
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Enter a message"
+                className="border-none focus:border-none focus:outline-none text-black bg-white flex flex-grow text-sm px-2"
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Inquire about your trip..."
-                className="flex-1 outline-none text-xs text-black rounded-lg px-3 py-2 focus:outline-none focus:ring-0"
               />
-              <button onClick={handleSendMessage} className="rounded-lg mr-3">
-                <Send size={16} color={primaryColor} />
+              <button onClick={handleSendMessage} className="mr-3">
+                <Send size={18} className="bg-transparent" color="#000" />
               </button>
             </div>
+          </div>
+          <div className="bg-neutral-100 border-t border-neutral-300 text-[10px] text-black/60 font-medium text-center rounded-b-md py-2">
+            Powered by Inquirely.io
           </div>
         </div>
       ) : (
         <button
           onClick={() => setIsOpen(true)}
-          disabled={isLoading}
-          className="rounded-full p-3 text-white shadow-lg hover:opacity-90"
-          style={{ backgroundColor: primaryColor }}
+          disabled={false}
+          className="rounded-full p-3 text-white hover:opacity-90 transition"
+          style={{ background: assistant?.color }}
         >
           <MessageCircle size={24} />
         </button>

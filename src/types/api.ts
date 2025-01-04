@@ -6,105 +6,47 @@ export interface ApiResponse<T = any> {
   };
 }
 
-/* PROJECTS */
-export interface Project {
-  id: string;
-  name: string;
-  description?: string;
-  author_id: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface CreateProjectRequest {
-  name: string;
-  description?: string;
-  author_id: string;
-}
-
-export interface ProjectApiResponse {
-  success: Project[];
-}
-
-export interface GetAllProjectsQuery {
-  author_id: string;
-}
-
-/* FOLDERS */
-export interface Folder {
-  id: string;
-  name: string;
-  description?: string;
-  project_id: string;
-  created_at: string;
-}
-
-export interface CreateFolderRequest {
-  name: string;
-  description?: string;
-  project_id: string;
-}
-
-export interface FolderApiResponse {
-  success: Folder[];
-}
-
-export interface GetAllFoldersQuery {
-  project_id: string;
-}
-
-/* SUBMISSIONS */
-export interface Submission {
-  id: string;
-  name: string;
-  url?: string;
-  folder_id: string;
-  created_at: string;
-}
-
-export interface GetAllSubmissionsQuery {
-  folder_id: string;
-}
-
-export interface SubmissionApiResponse {
-  success: Submission[];
-}
-
-export interface CustomUser {
-  id: number;
-  name: string;
-  email: string;
-}
-
-export interface UserSlice {
-  user: {
-    data: CustomUser | null;
-    loading: boolean;
-    error: string | null;
+export interface ChatsApiRequest {
+  query?: {
+    assistant_id: string;
   };
-  setUser: (userData: CustomUser | null) => void;
-  setUserLoading: (loading: boolean) => void;
-  setUserError: (error: string | null) => void;
-  clearUser: () => void;
+  data?: {
+    query: string;
+    folder_id: string;
+    assistant_id: string;
+  };
+  headers: {
+    Authorization: string;
+  };
 }
 
-export type StoreState = UserSlice;
-
-export interface AskApiRequest {
-  query: string;
-  folder_id: string;
+export interface AssistantApiRequest {
+  query: {
+    project_id: string;
+  };
+  headers: {
+    Authorization: string;
+  };
 }
 
-export interface AskApiResponse {
-  response: string;
-  context: string;
+export interface Assistant {
+  id: string;
+  name: string;
+  designation: string;
+  base_prompt: string;
+  avatar_url: string;
+  created_at: string;
+  color: string;
+  conversation_starter: string;
+  project_id: string;
 }
 
-export interface UploadApiRequest {
-  folder_id: string;
-}
-
-export interface AskApiResponse {
-  response: string;
-  context: string;
+export interface Message {
+  id?: string;
+  content: string;
+  sent_on?: string;
+  sender: string;
+  role: string;
+  // Assistant ID
+  thread_id: string;
 }
