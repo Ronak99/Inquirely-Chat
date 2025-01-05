@@ -161,7 +161,7 @@ const ChatBubble: React.FC<FormatterProps> = ({ message, themeColor }) => {
             background: message.role === "user" ? themeColor : "#d4d4d4",
           }}
         >
-          {message.content}
+          {formattedContent}
         </div>
       )}
     </div>

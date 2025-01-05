@@ -38,6 +38,10 @@ const nextConfig: NextConfig = {
         source: "/api/:path*",
         destination: "http://localhost:3000/api/:path*",
       },
+      {
+        source: "/api/:path*",
+        destination: "https://inquirely-web.vercel.app/api/:path*",
+      },
     ];
   },
 };
