@@ -11,7 +11,8 @@ import {
 import { useApi } from "../hooks/useApi";
 import ChatBubble from "./chat_bubble";
 import Link from "next/link";
-import "./globals.css";
+
+import "../styles/chat-widget.css";
 
 interface ChatWidgetProps {
   folderId: string;
@@ -73,7 +74,9 @@ const ChatWidget = ({ folderId, projectId, threadId }: ChatWidgetProps) => {
   });
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 50);
   };
 
   useEffect(() => {
@@ -170,7 +173,7 @@ const ChatWidget = ({ folderId, projectId, threadId }: ChatWidgetProps) => {
 
   // ************ UI BEGINS ***********
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed-bottom-right">
       {isOpen && assistant ? (
         <div className="w-[400px] flex flex-col h-[650px] bg-white rounded-md">
           <div
