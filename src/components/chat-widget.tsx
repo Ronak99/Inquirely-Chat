@@ -11,6 +11,7 @@ import {
 import { useApi } from "../hooks/useApi";
 import ChatBubble from "./chat_bubble";
 import Link from "next/link";
+import "./globals.css";
 
 interface ChatWidgetProps {
   folderId: string;
