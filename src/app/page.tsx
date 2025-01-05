@@ -4,11 +4,20 @@ import React from "react";
 import ChatWidget from "../components/chat-widget";
 
 export default function Page() {
+  // The ID of this project
+  const wanderon_project = "58574c72-5b43-41cc-82b9-cae846a8fbd7";
+
+  // The ID of this folder
+  const kashmir_folder = "fb700838-32c9-4cb2-b27f-5e08ef26e38d";
+
+  // A custom session key or user ID to retrieve chats of your user
+  const threadId = "custom-user-id";
+
   return (
     <ChatWidget
-      folderId="f0d402e5-1183-424f-b723-31d213b2c278"
-      projectId="6b934eaf-d7e6-4e1a-af33-00c480a94bae"
-      apiKey="Bearer sk-c01cab6669db906c01cec515ed84f256ca2b7c61"
+      projectId={wanderon_project}
+      folderId={kashmir_folder}
+      threadId={threadId}
     />
   );
 }
