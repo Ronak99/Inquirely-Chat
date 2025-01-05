@@ -8,24 +8,21 @@ export interface ApiResponse<T = any> {
 
 export interface ChatsApiRequest {
   query?: {
+    thread_id: string;
     assistant_id: string;
   };
   data?: {
     query: string;
     folder_id: string;
     assistant_id: string;
-  };
-  headers: {
-    Authorization: string;
+    thread_id: string;
+    project_id: string;
   };
 }
 
 export interface AssistantApiRequest {
   query: {
     project_id: string;
-  };
-  headers: {
-    Authorization: string;
   };
 }
 
@@ -44,9 +41,9 @@ export interface Assistant {
 export interface Message {
   id?: string;
   content: string;
-  sent_on?: string;
-  sender: string;
   role: string;
-  // Assistant ID
   thread_id: string;
+  assistant_id: string;
+  project_id: string;
+  sent_on?: string;
 }
