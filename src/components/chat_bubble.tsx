@@ -140,7 +140,6 @@ const ChatBubble: React.FC<FormatterProps> = ({ message, themeColor }) => {
 
   return (
     <div
-      key={message.id}
       className={`flex ${
         message.role === "user" ? "justify-end" : "justify-start"
       }`}
@@ -163,7 +162,6 @@ const ChatBubble: React.FC<FormatterProps> = ({ message, themeColor }) => {
           }}
         >
           {message.content}
-          {/* {message.id ?? "no id"} */}
         </div>
       )}
     </div>
