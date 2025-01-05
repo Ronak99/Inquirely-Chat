@@ -18,11 +18,17 @@ export interface ChatsApiRequest {
     thread_id: string;
     project_id: string;
   };
+  headers?: {
+    Authorization: string;
+  };
 }
 
 export interface AssistantApiRequest {
   query: {
     project_id: string;
+  };
+  headers?: {
+    Authorization: string;
   };
 }
 
