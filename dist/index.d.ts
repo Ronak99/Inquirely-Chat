@@ -1,18 +1,10 @@
 import * as react_jsx_runtime from 'react/jsx-runtime';
 
-interface Message {
-    id: string;
-    content: string;
-    sender: "user" | "system";
-    timestamp: Date;
-}
-
 interface ChatWidgetProps {
-    initialMessages?: Message[];
-    onSendMessage?: (message: string) => void;
-    primaryColor?: string;
     folderId: string;
+    projectId: string;
+    threadId: string;
 }
-declare const ChatWidget: ({ initialMessages, onSendMessage, primaryColor, folderId, }: ChatWidgetProps) => react_jsx_runtime.JSX.Element;
+declare const ChatWidget: ({ folderId, projectId, threadId }: ChatWidgetProps) => react_jsx_runtime.JSX.Element;
 
 export { ChatWidget as default };

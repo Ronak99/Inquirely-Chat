@@ -171,28 +171,74 @@ const ChatWidget = ({ folderId, projectId, threadId }: ChatWidgetProps) => {
 
   // ************ UI BEGINS ***********
   return (
-    <div className="fixed-bottom-right">
+    <div
+      style={{
+        position: "fixed",
+        bottom: "16px",
+        right: "16px",
+        zIndex: 50,
+        fontFamily: "sans-serif",
+      }}
+    >
       {isOpen && assistant ? (
-        <div className="w-[400px] flex flex-col h-[650px] bg-white rounded-md">
+        <div
+          style={{
+            width: "400px",
+            display: "flex",
+            flexDirection: "column",
+            height: "650px",
+            backgroundColor: "white",
+            borderRadius: "6px",
+          }}
+        >
           <div
-            className={`h-[60px] py-4 rounded-t-md flex items-center px-2 space-x-2`}
-            style={{ background: assistant.color }}
+            style={{
+              height: "60px",
+              paddingTop: "8px",
+              paddingBottom: "8px",
+              borderTopLeftRadius: "6px",
+              borderTopRightRadius: "6px",
+              display: "flex",
+              alignItems: "center",
+              paddingLeft: "8px",
+              paddingRight: "8px",
+              gap: "8px",
+              background: assistant.color,
+            }}
           >
             <img
-              className="rounded-full"
+              style={{ borderRadius: "9999px" }}
               src={assistant.avatar_url}
               alt=""
               width={40}
               height={40}
             />
-            <div className="flex flex-col flex-grow">
-              <p className="font-semibold text-white">{assistant.name}</p>
-              <p className="text-xs text-white/70">{assistant.designation}</p>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: 1,
+                gap: 0,
+              }}
+            >
+              <span
+                style={{
+                  fontWeight: 600,
+                  color: "white",
+                }}
+              >
+                {assistant.name}
+              </span>
+              <span
+                style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.7)" }}
+              >
+                {assistant.designation}
+              </span>
             </div>
             <X
               width={30}
               height={20}
-              className="text-white cursor-pointer"
+              style={{ color: "white", cursor: "pointer" }}
               onClick={() => {
                 setIsOpen(false);
               }}
@@ -200,8 +246,26 @@ const ChatWidget = ({ folderId, projectId, threadId }: ChatWidgetProps) => {
           </div>
 
           {/* Message List */}
-          <div className="flex flex-col flex-grow rounded-b-md space-y-2 overflow-y-auto border">
-            <div className="px-2 pt-2 space-y-2 flex-grow overflow-y-auto">
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flexGrow: 1,
+              borderBottomLeftRadius: "6px",
+              borderBottomRightRadius: "6px",
+              gap: "8px",
+              overflowY: "auto",
+              border: "1px solid rgb(212, 212, 212)",
+            }}
+          >
+            <div
+              style={{
+                padding: "8px 8px 0 8px",
+                gap: "8px",
+                flexGrow: 1,
+                overflowY: "auto",
+              }}
+            >
               {messages.length > 0 ? (
                 messages.map((message) => (
                   <ChatBubble
@@ -211,7 +275,13 @@ const ChatWidget = ({ folderId, projectId, threadId }: ChatWidgetProps) => {
                   />
                 ))
               ) : (
-                <div className="text-center text-gray-800 py-4">
+                <div
+                  style={{
+                    textAlign: "center",
+                    color: "rgb(31, 41, 55)",
+                    padding: "16px 0",
+                  }}
+                >
                   {assistant.conversation_starter}
                 </div>
               )}
@@ -219,24 +289,59 @@ const ChatWidget = ({ folderId, projectId, threadId }: ChatWidgetProps) => {
             </div>
 
             {/* Chat Control */}
-
-            <div className="rounded-md flex border border-neutral-300 px-2 mx-2 mb-4 mt-2">
+            <div
+              style={{
+                borderRadius: "6px",
+                display: "flex",
+                border: "1px solid rgb(212, 212, 212)",
+                padding: "0 8px",
+                margin: "0px 8px 0px 8px",
+              }}
+            >
               <input
                 placeholder="Enter a message"
-                className="border-none focus:border-none focus:outline-none text-black bg-white flex flex-grow text-sm px-2 py-4"
+                style={{
+                  border: "none",
+                  outline: "none",
+                  color: "black",
+                  backgroundColor: "white",
+                  display: "flex",
+                  flexGrow: 1,
+                  fontSize: "14px",
+                  padding: "16px 8px",
+                }}
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
               />
-              <button onClick={handleSendMessage} className="mr-3">
-                <Send size={18} className="bg-transparent" color="#000" />
+              <button
+                onClick={handleSendMessage}
+                style={{ marginRight: "12px" }}
+              >
+                <Send
+                  size={18}
+                  style={{ backgroundColor: "transparent" }}
+                  color="#000"
+                />
               </button>
             </div>
 
-            <div className="bg-neutral-100 border-t border-neutral-300 text-[10px] text-black/60 font-medium text-center rounded-b-md py-2">
+            <div
+              style={{
+                backgroundColor: "rgb(243, 244, 246)",
+                borderTop: "1px solid rgb(212, 212, 212)",
+                fontSize: "10px",
+                color: "rgba(0, 0, 0, 0.6)",
+                fontWeight: 500,
+                textAlign: "center",
+                borderBottomLeftRadius: "6px",
+                borderBottomRightRadius: "6px",
+                padding: "8px 0",
+              }}
+            >
               <span>Powered by </span>
               <Link href="https://inquirely-web.vercel.app" target="_blank">
-                <span className="hover:underline">Inquirely.io</span>
+                <span style={{ cursor: "pointer" }}>Inquirely.io</span>
               </Link>
             </div>
           </div>
@@ -245,8 +350,15 @@ const ChatWidget = ({ folderId, projectId, threadId }: ChatWidgetProps) => {
         <button
           onClick={() => setIsOpen(true)}
           disabled={false}
-          className="rounded-full p-3 text-white hover:opacity-90 transition"
-          style={{ background: assistant?.color }}
+          style={{
+            borderRadius: "9999px",
+            padding: "12px",
+            color: "white",
+            transition: "opacity 0.3s",
+            background: assistant?.color,
+            cursor: "pointer",
+            border: 0,
+          }}
         >
           <MessageCircle size={24} />
         </button>

@@ -33,27 +33,46 @@ const ChatBubble: React.FC<FormatterProps> = ({ message, themeColor }) => {
     });
 
     return (
-      <div className="overflow-x-auto my-4">
-        <table className="min-w-full bg-white border border-gray-300 rounded-lg">
-          <thead className="bg-gray-50">
+      <div style={{ overflowX: "auto", margin: "1rem 0" }}>
+        <table
+          style={{
+            minWidth: "100%",
+            backgroundColor: "white",
+            border: "1px solid #d1d5db",
+            borderRadius: "0.5rem",
+          }}
+        >
+          <thead style={{ backgroundColor: "#f9fafb" }}>
             <tr>
               {headers.map((header, index) => (
                 <th
                   key={index}
-                  className="px-6 py-3 text-left text-sm font-semibold text-gray-900 border-b"
+                  style={{
+                    padding: "0.75rem",
+                    textAlign: "left",
+                    fontSize: "0.875rem",
+                    fontWeight: "600",
+                    color: "#111827",
+                    borderBottom: "1px solid #d1d5db",
+                  }}
                 >
                   {header}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody style={{ borderTop: "1px solid #e5e7eb" }}>
             {rows.map((row, rowIndex) => (
-              <tr key={rowIndex} className="hover:bg-gray-50">
+              <tr key={rowIndex} style={{ backgroundColor: "#ffffff" }}>
                 {row.map((cell, cellIndex) => (
                   <td
                     key={cellIndex}
-                    className="px-6 py-4 text-sm text-gray-900 border-b"
+                    style={{
+                      padding: "0.75rem",
+                      fontSize: "0.875rem",
+                      color: "#111827",
+                      borderBottom: "1px solid #d1d5db",
+                    }}
                     dangerouslySetInnerHTML={{ __html: cell }}
                   />
                 ))}
@@ -94,7 +113,14 @@ const ChatBubble: React.FC<FormatterProps> = ({ message, themeColor }) => {
         // Handle headers
         if (line.startsWith("###")) {
           formatted.push(
-            <h3 key={index} className="text-xl font-bold my-4">
+            <h3
+              key={index}
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: "700",
+                margin: "1rem 0",
+              }}
+            >
               {line.replace("###", "").trim()}
             </h3>
           );
@@ -109,7 +135,11 @@ const ChatBubble: React.FC<FormatterProps> = ({ message, themeColor }) => {
           formatted.push(
             <li
               key={index}
-              className="ml-6 my-2 list-disc"
+              style={{
+                marginLeft: "1.5rem",
+                margin: "0.5rem 0",
+                listStyleType: "disc",
+              }}
               dangerouslySetInnerHTML={{
                 __html: boldText.replace("-", "").trim(),
               }}
@@ -123,7 +153,7 @@ const ChatBubble: React.FC<FormatterProps> = ({ message, themeColor }) => {
           formatted.push(
             <p
               key={index}
-              className=""
+              style={{ margin: "0.5rem 0" }}
               dangerouslySetInnerHTML={{
                 __html: boldText,
               }}
@@ -140,25 +170,40 @@ const ChatBubble: React.FC<FormatterProps> = ({ message, themeColor }) => {
 
   return (
     <div
-      className={`flex ${
-        message.role === "user" ? "justify-end" : "justify-start"
-      }`}
+      style={{
+        display: "flex",
+        justifyContent: message.role === "user" ? "flex-end" : "flex-start",
+      }}
     >
       {message.content == "system_typing" ? (
         <div
-          className={`max-w-[75%] rounded-md px-3 py-3 bg-neutral-300 text-black border border-neutral-400 rounded-tl-none`}
+          style={{
+            maxWidth: "75%",
+            borderRadius: "0.375rem",
+            padding: "0.75rem",
+            backgroundColor: "#d1d5db",
+            color: "black",
+            border: "1px solid #a3a3a3",
+            borderTopLeftRadius: "0",
+          }}
         >
           <BouncingDotsAnimation />
         </div>
       ) : (
         <div
-          className={`prose max-w-[75%] rounded-md px-4 py-3 text-white-800 text-sm shadow-sm ${
-            message.role === "user"
-              ? `text-gray-300 rounded-br-none`
-              : "text-black border border-neutral-400 rounded-tl-none"
-          }`}
           style={{
-            background: message.role === "user" ? themeColor : "#d4d4d4",
+            maxWidth: "75%",
+            borderRadius: "0.375rem",
+            padding: "0.25rem 1rem 0.25rem 1rem",
+            margin: "8px 0px 8px 0px",
+            fontSize: "0.875rem",
+            lineHeight: "1.25rem",
+            boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+            backgroundColor: message.role === "user" ? themeColor : "#d4d4d4",
+            color: message.role === "user" ? "#d1d5db" : "black",
+            border: message.role === "user" ? "none" : "1px solid #a3a3a3",
+            borderBottomRightRadius: message.role === "user" ? "0" : "0.375rem",
+            borderTopLeftRadius: message.role === "user" ? "0.375rem" : "0",
           }}
         >
           {formattedContent}
@@ -166,12 +211,6 @@ const ChatBubble: React.FC<FormatterProps> = ({ message, themeColor }) => {
       )}
     </div>
   );
-
-  //   return (
-  //     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow">
-  //       <div className="prose">{formattedContent}</div>
-  //     </div>
-  //   );
 };
 
 export default ChatBubble;
