@@ -206,13 +206,22 @@ const ChatWidget = ({ folderId, projectId, threadId }: ChatWidgetProps) => {
               background: assistant.color,
             }}
           >
-            <img
-              style={{ borderRadius: "9999px" }}
-              src={assistant.avatar_url}
-              alt=""
-              width={40}
-              height={40}
-            />
+            <div
+              style={{
+                height: 40,
+                width: 40,
+                overflow: "hidden",
+                borderRadius: "9999px",
+              }}
+            >
+              <img
+                style={{ borderRadius: "9999px" }}
+                src={assistant.avatar_url}
+                alt=""
+                width={40}
+                height={40}
+              />
+            </div>
             <div
               style={{
                 display: "flex",

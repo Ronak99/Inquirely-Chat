@@ -136,8 +136,7 @@ const ChatBubble: React.FC<FormatterProps> = ({ message, themeColor }) => {
             <li
               key={index}
               style={{
-                marginLeft: "1.5rem",
-                margin: "0.5rem 0",
+                margin: "0.5rem 0.5rem",
                 listStyleType: "disc",
               }}
               dangerouslySetInnerHTML={{
