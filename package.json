@@ -1,6 +1,6 @@
 {
   "name": "inquirely-chat",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Chat component for the Inquirely Service.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
